@@ -24,23 +24,23 @@ public class UserService {
     private final NotificationClient notificationClient;
 
     public UserService(UserRepository repository,
-                       PasswordEncoder encoder,
-                       NotificationClient notificationClient) {
+            PasswordEncoder encoder,
+            NotificationClient notificationClient) {
         this.repository = repository;
         this.encoder = encoder;
         this.notificationClient = notificationClient;
     }
 
-    
     public List<User> getAllUsers() {
         return repository.findAll();
     }
+
     public void initiatePasswordReset(String email) {
 
         Optional<User> optionalUser = repository.findByEmail(email);
 
         if (optionalUser.isEmpty()) {
-            return; 
+            return;
         }
 
         User user = optionalUser.get();
@@ -52,15 +52,19 @@ public class UserService {
 
         repository.save(user);
 
-        notificationClient.sendEmail(
-            user.getEmail(),
-            "Password Reset - PharmaCare",
-            "Click the link below to reset your password:\n\n" +
-            "http://localhost:5173/reset-password?token=" + token +
-            "\n\nThis link expires in 15 minutes."
-        );
+        try {
+            notificationClient.sendEmail(
+                    user.getEmail(),
+                    "Password Reset - PharmaCare",
+                    "Click the link below to reset your password:\n\n" +
+                            "https://pharmacare-frontend.onrender.com/reset-password?token=" + token +
+                            "\n\nThis link expires in 15 minutes.");
+        } catch (Exception e) {
+            System.err.println("FAILED TO SEND RESET EMAIL: " + e.getMessage());
+            System.out.println("RESET TOKEN FOR " + email + ": " + token);
+        }
     }
-    
+
     public void createUser(RegisterRequest request) {
 
         if (repository.findByEmail(request.getEmail()).isPresent()) {
@@ -84,18 +88,22 @@ public class UserService {
 
         repository.save(user);
 
-        
-        notificationClient.sendEmail(
-                request.getEmail(),
-                "Account Created - PharmaCare",
-                "Hello " + request.getName() + ",\n\n" +
-                "Your account has been created successfully.\n\n" +
-                "Email: " + request.getEmail() + "\n" +
-                "Temporary Password: " + tempPassword + "\n\n" +
-                "Please change your password after your first login.\n\n" +
-                "Regards,\nPharmaCare Management System"
-        );
+        try {
+            notificationClient.sendEmail(
+                    request.getEmail(),
+                    "Account Created - PharmaCare",
+                    "Hello " + request.getName() + ",\n\n" +
+                            "Your account has been created successfully.\n\n" +
+                            "Email: " + request.getEmail() + "\n" +
+                            "Temporary Password: " + tempPassword + "\n\n" +
+                            "Please change your password after your first login.\n\n" +
+                            "Regards,\nPharmaCare Management System");
+        } catch (Exception e) {
+            System.err.println("FAILED TO SEND WELCOME EMAIL: " + e.getMessage());
+            System.out.println("TEMP PASSWORD FOR " + request.getEmail() + ": " + tempPassword);
+        }
     }
+
     public void resetPassword(String token, String newPassword) {
 
         User user = repository.findByResetToken(token)
@@ -112,7 +120,7 @@ public class UserService {
 
         repository.save(user);
     }
-    
+
     public void updateStatus(String id, String status) {
 
         User user = repository.findById(id)
@@ -122,12 +130,10 @@ public class UserService {
         repository.save(user);
     }
 
-    
     public void deleteUser(String id) {
         repository.deleteById(id);
     }
 
-    
     public void changePassword(String email, String newPassword) {
 
         User user = repository.findByEmail(email)

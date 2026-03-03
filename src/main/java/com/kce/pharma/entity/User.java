@@ -17,44 +17,46 @@ import java.util.UUID;
 @Builder
 public class User {
 
-    @Id
-    @Column(name = "ID", length = 36)
-    private String id;
+	@Id
+	@Column(name = "ID", length = 36)
+	private String id;
 
-    @PrePersist
-    public void generateId() {
-        if (this.id == null) {
-            this.id = UUID.randomUUID().toString();
-        }
-        if (this.createdAt == null) {
-            this.createdAt = LocalDateTime.now();
-        }
-    }
+	@PrePersist
+	public void generateId() {
+		if (this.id == null) {
+			this.id = UUID.randomUUID().toString();
+		}
+		if (this.createdAt == null) {
+			this.createdAt = LocalDateTime.now();
+		}
+	}
 
-    @Column(name = "EMAIL", unique = true, nullable = false)
-    private String email;
+	@Column(name = "EMAIL", unique = true, nullable = false)
+	private String email;
 
-    @JsonIgnore
-    @Column(name = "PASSWORD", nullable = false)
-    private String password;
+	@JsonIgnore
+	@Column(name = "PASSWORD", nullable = false)
+	private String password;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "ROLE")
-    private Role role;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ROLE")
+	private Role role;
 
-    @Column(name = "NAME")
-    private String name;
+	@Column(name = "NAME")
+	private String name;
 
-    public String getId() {
+	public String getId() {
 		return id;
 	}
 
 	public void setId(String id) {
 		this.id = id;
 	}
+
+	@Builder.Default
 	@Column(nullable = false)
 	private Boolean firstLogin = true;
-	
+
 	public boolean isFirstLogin() {
 		return firstLogin;
 	}
@@ -91,7 +93,6 @@ public class User {
 		return name;
 	}
 
-
 	public Boolean getFirstLogin() {
 		return firstLogin;
 	}
@@ -116,9 +117,12 @@ public class User {
 		this.resetTokenExpiry = resetTokenExpiry;
 	}
 
+	@Column(name = "RESET_TOKEN")
 	private String resetToken;
+
+	@Column(name = "RESET_TOKEN_EXPIRY")
 	private LocalDateTime resetTokenExpiry;
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -146,22 +150,27 @@ public class User {
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
+
 	@Column
 	private String phoneNumber;
+
 	public String getPhoneNumber() {
-	    return phoneNumber;
+		return phoneNumber;
 	}
 
 	public void setPhoneNumber(String phoneNumber) {
-	    this.phoneNumber = phoneNumber;
+		this.phoneNumber = phoneNumber;
 	}
+
+	@Builder.Default
 	@Enumerated(EnumType.STRING)
-    @Column(name = "STATUS")
-    private Status status = Status.Active;
+	@Column(name = "STATUS")
+	private Status status = Status.Active;
 
-    @Column(name = "JOIN_DATE")
-    private LocalDate joinDate;
+	@Column(name = "JOIN_DATE")
+	private LocalDate joinDate;
 
-    @Column(name = "CREATED_AT")
-    private LocalDateTime createdAt;
+	@Builder.Default
+	@Column(name = "CREATED_AT")
+	private LocalDateTime createdAt = LocalDateTime.now();
 }
