@@ -59,26 +59,33 @@ public class SecurityConfig {
 
     
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+public CorsConfigurationSource corsConfigurationSource() {
 
-        CorsConfiguration configuration = new CorsConfiguration();
+    CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
-        configuration.setAllowedMethods(
-                Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
-        );
-        configuration.setAllowedHeaders(
-                Arrays.asList("Authorization", "Content-Type", "Accept", "X-Requested-With")
-        );
+    configuration.setAllowedOrigins(
+        List.of(
+            "http://localhost:5173",
+            "https://pharmacare-iota.vercel.app"
+        )
+    );
 
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
+    configuration.setAllowedMethods(
+        Arrays.asList("GET","POST","PUT","PATCH","DELETE","OPTIONS")
+    );
 
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
+    configuration.setAllowedHeaders(
+        Arrays.asList("Authorization","Content-Type","Accept","X-Requested-With")
+    );
 
-        source.registerCorsConfiguration("/**", configuration);
+    configuration.setAllowCredentials(true);
+    configuration.setMaxAge(3600L);
 
-        return source;
-    }
+    UrlBasedCorsConfigurationSource source =
+            new UrlBasedCorsConfigurationSource();
+
+    source.registerCorsConfiguration("/**", configuration);
+
+    return source;
+}
 }
