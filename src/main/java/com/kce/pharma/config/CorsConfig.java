@@ -19,7 +19,7 @@ public class CorsConfig {
                 registry.addMapping("/**")
                         .allowedOrigins(
                                 "http://localhost:5173",
-                                "https://pharmacare-frontend-sable.vercel.app"
+                                "https://pharmacare-iota.vercel.app"
                         )
                         .allowedMethods(
                                 "GET",
