@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.kce.pharma.client.NotificationClient;
+import com.kce.pharma.dto.EmailRequest;
 import com.kce.pharma.dto.RegisterRequest;
 import com.kce.pharma.entity.Role;
 import com.kce.pharma.entity.Status;
@@ -53,12 +54,12 @@ public class UserService {
         repository.save(user);
 
         try {
-            notificationClient.sendEmail(
+            notificationClient.sendEmail(new EmailRequest(
                     user.getEmail(),
                     "Password Reset - PharmaCare",
                     "Click the link below to reset your password:\n\n" +
                             "https://pharmacare-frontend.onrender.com/reset-password?token=" + token +
-                            "\n\nThis link expires in 15 minutes.");
+                            "\n\nThis link expires in 15 minutes."));
         } catch (Exception e) {
             System.err.println("FAILED TO SEND RESET EMAIL: " + e.getMessage());
             System.out.println("RESET TOKEN FOR " + email + ": " + token);
@@ -89,7 +90,7 @@ public class UserService {
         repository.save(user);
 
         try {
-            notificationClient.sendEmail(
+            notificationClient.sendEmail(new EmailRequest(
                     request.getEmail(),
                     "Account Created - PharmaCare",
                     "Hello " + request.getName() + ",\n\n" +
@@ -97,7 +98,7 @@ public class UserService {
                             "Email: " + request.getEmail() + "\n" +
                             "Temporary Password: " + tempPassword + "\n\n" +
                             "Please change your password after your first login.\n\n" +
-                            "Regards,\nPharmaCare Management System");
+                            "Regards,\nPharmaCare Management System"));
         } catch (Exception e) {
             System.err.println("FAILED TO SEND WELCOME EMAIL: " + e.getMessage());
             System.out.println("TEMP PASSWORD FOR " + request.getEmail() + ": " + tempPassword);
